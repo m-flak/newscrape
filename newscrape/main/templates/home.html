@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% block head %}
+  <meta itemprop="user-api-key" content="{{ apikey }}" />
+  <script src="{{ url_for('static', filename='home.js') }}"
+    type="text/javascript"></script>
+{% endblock %}
+
 {% block header %}
   <h2>{% block title %}Home{% endblock %}</h2>
   <div id="navbar">
@@ -20,11 +26,14 @@
   <div class="keywords">
     <h4>Keywords:</h4>
     {% for keyword in keywords %}
-      <div id="keyword-{{ loop.index }}">{{ keyword }}<a class="kw modify-keyword" id="modify-keyword-{{ loop.index }}" href="#"></a></div>
+      <div id="keyword-{{ loop.index }}"><p>{{ keyword }}</p><a class="kw modify-keyword" id="modify-keyword-{{ loop.index }}" href="#"></a></div>
       {% if loop.last %}
-        <div id="keyword-new"><a class="kw new-keyword" id="modify-keyword-new" href="#"></a></div>
+        <div id="keyword-new"><a class="kw new-keyword" id="modify-keyword-new" href="#" title="Add New Keyword"></a></div>
       {% endif %}
     {% endfor %}
+    {% if keywords|length() == 0 %}
+      <div id="keyword-new"><a class="kw new-keyword" id="modify-keyword-new" href="#" title="Add New Keyword"></a></div>
+    {% endif %}
   </div>
   <div class="results">
     Stub

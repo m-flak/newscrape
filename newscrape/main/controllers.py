@@ -1,4 +1,5 @@
 import base64
+import werkzeug.urls
 from flask import (
 Blueprint, render_template, request, abort, flash, redirect, url_for
 )
@@ -16,7 +17,11 @@ main = Blueprint('main', __name__, template_folder='templates')
 @main.route('/index')
 @login_required
 def index():
-    return render_template('home.html', keywords=current_user.get_keywords())
+    # api keys are good for 2hrs
+    # meaning no refresh required for 2hrs :)
+    apikey = current_user.get_api_key()
+    return render_template('home.html', keywords=current_user.get_keywords(),
+                            apikey=werkzeug.urls.url_fix(apikey))
 
 @main.route('/welcome')
 def welcome():

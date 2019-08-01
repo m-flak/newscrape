@@ -6,8 +6,6 @@ from flask import url_for
 def get_secret_key(for_app):
     # our package directory
     pkg_path = os.path.abspath(os.path.dirname(__file__))
-    # secret key
-    key_str  = ""
 
     with open(os.path.join(pkg_path,'secret.key'), 'r') as key:
          for_app.secret_key = key.read()
@@ -22,6 +20,7 @@ def validate_inputs(inputs, regex):
                 raise ValueError("Item {} : {} is invalid".format(inputs.index(s), s))
         return
     else:
+        s = inputs
         if re.search(regex, inputs) is not None:
             raise ValueError("Item {} : {} is invalid".format(inputs.index(s), s))
     return

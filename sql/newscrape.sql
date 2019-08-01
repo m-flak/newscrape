@@ -8,6 +8,8 @@ CREATE TABLE users (
   name VARCHAR(255) DEFAULT NULL,
   pass BLOB,
   admin TINYINT DEFAULT 0,
+  api_key TEXT,
+  key_expire DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE KEY email (email),
   UNIQUE KEY name (name)
