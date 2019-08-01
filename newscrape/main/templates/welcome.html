@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>{% block title %}Welcome{% endblock %}</h2>
+{% endblock %}
+
+{% set next=request.args.get('next') %}
+
+{% block content %}
+  <p>To get started with <span style="font-style: italic;">NewScrape</span>,
+    please either <span style="font-weight: bold;">register</span> or
+    <span style="font-weight: bold;">login</span>.
+  </p>
+  <div class="welcome-choices">
+    <ul>
+      <li><a href="{{ url_for('main.login', next=next) }}">Login</a></li>
+      <li><a href="{{ url_for('main.register_account') }}">Register</a></li>
+    </ul>
+  </div>
+{% endblock %}

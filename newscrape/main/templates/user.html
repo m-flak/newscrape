@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block header %}
+  <h2>{% block title %}User{% endblock %}: {{ current_user.name }}</h2>
+  <div id="navbar">
+    <a href="{{ url_for('main.index') }}">Home</a>
+    &nbsp;&#x25CF;&nbsp;
+    <a href="#">User</a>
+    &nbsp;&#x25CF;&nbsp;
+    <a href="{{ url_for('main.logout') }}">Logout</a>
+  </div>
+  <br/>
+{% endblock %}
+
+{% block content %}
+  <h3>Change Password:</h3>
+  <div>
+    {{ wtf.quick_form(form) }}
+  </div>
+{% endblock %}

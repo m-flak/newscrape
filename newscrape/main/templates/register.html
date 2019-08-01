@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <script>var input_sel_prefix="new";</script>
+  <script src="{{ url_for('static', filename='base64.js') }}"
+    type="text/javascript"></script>
+  <script src="{{ url_for('static', filename='r-validation.js') }}"
+    type="text/javascript"></script>
+{% endblock %}
+
+{% block header %}
+  <h2>
+    {% block title %}
+      {% if not reg %}
+        Register
+      {% else %}
+        {% if reg == "yes" %}
+          Registration Successful
+        {% else %}
+          Registration Failed
+        {% endif %}
+      {% endif %}
+    {% endblock %}
+  </h2>
+{% endblock %}
+
+{% block content %}
+  {% if not reg %}
+    <form action="{{ url_for('main.register_account') }}" method="POST" target="_self">
+      <input type="hidden" name="register" value="yes" />
+      <table>
+        <tr>
+          <td>
+            <label for="new-account-email">E-mail:</label>
+          </td>
+          <td>
+            <input name="email" id="new-account-email" type="email" placeholder="" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="new-account-email" id="email-invalid" hidden>
+              Please enter a valid e-mail address.
+            </label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="new-account-name">Username:</label>
+          </td>
+          <td>
+            <input name="name" id="new-account-name" type="text" maxlength="20" placeholder="" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="new-account-name" id="name-invalid" hidden>
+              Characters not allowed: ),',!,|,\ or ,
+            </label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="new-account-password">Password:</label>
+          </td>
+          <td>
+            <input id="new-account-password" type="password" placeholder="" />
+            <input type="hidden" name="pass" value="" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="new-account-password" id="password-invalid" hidden>
+              Characters not allowed: ),',!,|,\ or ,
+            </label>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button type="submit">Register Account</button>
+          </td>
+        </tr>
+      </table>
+    </form>
+    {% else %}
+      {% if reg == "no" %}
+        <p>Registration has failed, because the username and/or email address
+           already exists within our system.
+           <br/>
+           <a href="{{ url_for('main.register_account') }}">Click Here</a> to
+           try again.
+        </p>
+      {% else %}
+        <p>Registration has succeeded. You may now login with your account via
+          the main page.
+          <br/>
+          <a href="{{ url_for('main.index') }}">Click Here</a> to return...
+        </p>
+      {% endif %}
+    {% endif %}
+{% endblock %}

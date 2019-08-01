@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>{% block title %}{% endblock %} - NewScrape</title>
+    <script src="http://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    {% block head %}{% endblock %}
+    <link href="{{ url_for('static', filename='newscrape.css') }}"
+          rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class="nsc-header">
+      <div class="nsc-title nsc-desc">
+        <h1>NewScrape</h1>
+        <p>Your News. Made Simple.</p>
+      </div>
+    </div>
+    <div class="container">
+      {% block header %}{% endblock %}
+      {% with messages = get_flashed_messages() %}
+         {% if messages %}
+         <p class="flasher" id="status-flash">
+         {% for message in messages %}
+          {{ message }}<br/>
+         {% endfor %}
+         </p>
+         {% endif %}
+      {% endwith %}
+      <div class="content">
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,3 @@
+*.pyc
+newscrape/secret.key
+

@@ -1,0 +1,6 @@
+﻿Flask
+Flask-Bootstrap
+Flask-Login
+Flask-SQLAlchemy
+Flask-WTF
+mysqlclient>=1.4.2

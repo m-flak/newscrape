@@ -1,0 +1,40 @@
+.nsc-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#navbar {
+  position: absolute;
+  min-width: 20%;
+  left: 5%;
+}
+
+.container {
+  position: relative;
+}
+
+.keywords {
+  float: left;
+  min-width: 25%;
+}
+
+.keywords div {
+  padding: 2px 0 2px 0;
+}
+
+a.kw {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+a.modify-keyword {
+  background: no-repeat url("/static/change-keyword.gif");
+}
+a.new-keyword {
+  background: no-repeat url("/static/new-keyword.gif");
+}
+
+.results {
+  float: right;
+}
