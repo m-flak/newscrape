@@ -26,7 +26,8 @@
   <div class="keywords">
     <h4>Keywords:</h4>
     {% for keyword in keywords %}
-      <div id="keyword-{{ loop.index }}"><p>{{ keyword }}</p><a class="kw modify-keyword" id="modify-keyword-{{ loop.index }}" href="#"></a></div>
+      <div id="keyword-{{ loop.index }}"><p>{{ keyword }}</p><a class="kw modify-keyword" id="modify-keyword-{{ loop.index }}" href="#"></a>
+          <a class="kw del-keyword" id="del-keyword-{{ loop.index }}" href="#"></a></div>
       {% if loop.last %}
         <div id="keyword-new"><a class="kw new-keyword" id="modify-keyword-new" href="#" title="Add New Keyword"></a></div>
       {% endif %}

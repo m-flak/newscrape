@@ -73,20 +73,55 @@ function onclick_modify(e) {
   });
 }
 
+function onclick_delete(e) {
+  let keyword = $(e.currentTarget.parentElement.children).filter("p");
+  var kw_index  = Number(keyword.parent().attr('id').match(/-(\d+)$/)[1]);
+  var kw_text   = keyword.text();
+
+  $("div.keywords").children("div:not(#keyword-new)").each(function(i) {
+    /* compare indices starting from 1 rather than 0 */
+    if (kw_index == ++i) {
+      $(this).remove();
+      /* re-index all remaining keywords */
+      let all_keywords = $("div.keywords").children("div:not(#keyword-new)");
+      for (var j = 0; j < all_keywords.length; j++) {
+        all_keywords[j].id = `keyword-${++j}`;
+      }
+    }
+  });
+
+  /* unpushed new keywords require nothing further */
+  if (kw_text === "new keyword") {
+    return;
+  }
+
+  $.ajax({
+    method: "POST",
+    url: create_api_url("keywords"),
+    data: { action: 'delete', keyword: kw_text, value: kw_text }
+  });
+}
+
 $(function() {
   $("a.new-keyword").on("click", function(e) {
     var index_new = $("div[id|='keyword']").length;
 
     $(this).parent().before(`<div id='keyword-${index_new}'><p>new keyword</p>
     <a class='kw modify-keyword' id='modify-keyword-${index_new}' href='#'></a>
+    <a class='kw del-keyword' id='del-keyword-${index_new}' href='#'></a>
     </div>`);
 
     let created_modify = $(`a[id='modify-keyword-${index_new}']`);
+    let created_delete = $(`a[id='del-keyword-${index_new}']`);
     add_tooltip(created_modify, "Update Keyword");
+    add_tooltip(created_delete, "Delete Keyword");
     created_modify.on("click", onclick_modify);
     created_modify.trigger('click');
+    created_delete.on("click", onclick_delete);
   });
 
   add_tooltip("a.modify-keyword", "Update Keyword");
+  add_tooltip("a.del-keyword", "Delete Keyword");
   $("a.modify-keyword").on("click", onclick_modify);
+  $("a.del-keyword").on("click", onclick_delete);
 });

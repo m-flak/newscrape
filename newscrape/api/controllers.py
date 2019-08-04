@@ -34,6 +34,17 @@ def keywords():
                 ns.db.session.commit()
             r = make_response({'status': 'OK', 'data': [],})
             r.mimetype = 'application/json'
+        elif request.form['action'] == 'delete':
+            kw = ns.models.Keyword.query.filter_by(uid=g.uid,
+                                        keyword=request.form['keyword'])
+            if not kw.count() >= 1:
+                r = make_response({'status': 'FAIL', 'data': [],})
+                r.mimetype = 'application/json'
+            else:
+                kw.delete()
+                ns.db.session.commit()
+                r = make_response({'status': 'OK', 'data': [],})
+                r.mimetype = 'application/json'
     elif request.method == 'GET':
         user = ns.models.User.query.filter_by(id=g.uid).first()
         if user is None:

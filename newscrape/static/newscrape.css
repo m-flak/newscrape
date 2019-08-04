@@ -19,10 +19,16 @@
   min-width: 25%;
 }
 .keywords div {
+  display: flex;
   padding: 2px 0 2px 0;
 }
 .keywords p {
+  padding-right: 4px;
   margin: 2px 0 2px 0;
+}
+.keywords div > a {
+  margin: 3px 2px 0 2px;
+  padding-right: 4px;
 }
 
 div#keyword-new {
@@ -39,6 +45,9 @@ a.modify-keyword {
 }
 a.new-keyword {
   background: no-repeat url("/static/new-keyword.gif");
+}
+a.del-keyword {
+  background: no-repeat url("/static/del-keyword.gif")
 }
 
 .results {
