@@ -1,6 +1,8 @@
 from flask import Blueprint, abort, request, g, make_response
 from flask_login import current_user
 from newscrape.api import api_key_required
+from newscrape.api.scraper import Scraper, GoogleSearch
+from werkzeug.urls import url_unquote
 import newscrape as ns
 
 api = Blueprint('api', __name__)
@@ -53,5 +55,30 @@ def keywords():
         else:
             r = make_response({'status': 'OK', 'data': user.get_keywords(),})
             r.mimetype = 'application/json'
+
+    return r
+
+@api.route('/stories')
+@api_key_required
+def stories():
+    user = ns.models.User.query.filter_by(id=g.uid).first()
+    r = None
+
+    if user is None:
+        r = make_response({'status': 'FAIL', 'data': [],})
+        r.mimetype = 'application/json'
+    else:
+        scraper = Scraper()
+
+        if 'newscrape_sprefs' in request.cookies:
+            search_prefs = url_unquote(request.cookies['newscrape_sprefs']).split(',')
+            for engine in search_prefs:
+                if 'google' in engine:
+                    scraper.add_scrapee(GoogleSearch(user.get_keywords()))
+
+        scraper.scrape()
+        stories = scraper.fetch_results()
+        r = make_response({'status': 'OK', 'data': stories,})
+        r.mimetype = 'application/json'
 
     return r

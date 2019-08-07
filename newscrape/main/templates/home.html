@@ -2,6 +2,8 @@
 
 {% block head %}
   <meta itemprop="user-api-key" content="{{ apikey }}" />
+  <script src="{{ url_for('static', filename='js.cookie.js') }}"
+    type="text/javascript"></script>
   <script src="{{ url_for('static', filename='home.js') }}"
     type="text/javascript"></script>
 {% endblock %}
@@ -37,6 +39,21 @@
     {% endif %}
   </div>
   <div class="results">
-    Stub
+    <!--- 'Fake News' - Donald Trump --->
+  </div>
+{% endblock %}
+
+{% block endcontainer %}
+  <div class="engine-prefs">
+    <h4>Search Engines:</h4>
+    <form name="search-engine-prefs">
+      <fieldset>
+        <legend>Engine Preferences:</legend>
+        <input type="checkbox" name="google" id="engine-google" />
+        <label for="google">Google</label>
+        <input type="checkbox" name="bing" id="engine-bing" />
+        <label for="bing">Bing</label>
+      </fieldset>
+    </form>
   </div>
 {% endblock %}

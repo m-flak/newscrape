@@ -69,6 +69,10 @@ function onclick_modify(e) {
       method: "POST",
       url: create_api_url("keywords"),
       data: { action: 'update', keyword: post_keyword, value: keyword.text() }
+    }).done(function(d) {
+      if (d.status === "FAIL") {
+        $("div#status-flash").append("Internal Server Error.<br/>");
+      }
     });
   });
 }
@@ -99,10 +103,44 @@ function onclick_delete(e) {
     method: "POST",
     url: create_api_url("keywords"),
     data: { action: 'delete', keyword: kw_text, value: kw_text }
+  }).done(function(d) {
+    if (d.status === "FAIL") {
+      $("div#status-flash").append("Internal Server Error.<br/>");
+    }
   });
 }
 
 $(function() {
+  let engine_prefs = $("form[name='search-engine-prefs']").children().children("input:checkbox");
+
+  /* Update to cookies to user's chosen choices */
+  engine_prefs.on("click", function(e) {
+    var new_sprefs = new Array();
+    engine_prefs.each(function(i,e) {
+      if (e.checked) {
+        new_sprefs.push($(this).attr('name'));
+      }
+    });
+    if (Cookies.get('newscrape_sprefs') != null) {
+      Cookies.remove('newscrape_sprefs');
+    }
+    Cookies.set('newscrape_sprefs', new_sprefs.toString());
+  });
+
+  /* Create default user choices cookie; Otherwise, load them */
+  if (Cookies.get('newscrape_sprefs') == null) {
+    Cookies.set('newscrape_sprefs', 'google,bing');
+  } else {
+    var engines = Cookies.get('newscrape_sprefs').split(',');
+    for (var i in engines) {
+      engine_prefs.each(function() {
+        if ($(this).attr('name') === engines[i]) {
+          $(this).attr('checked', true);
+        }
+      });
+    }
+  }
+
   $("a.new-keyword").on("click", function(e) {
     var index_new = $("div[id|='keyword']").length;
 
@@ -124,4 +162,15 @@ $(function() {
   add_tooltip("a.del-keyword", "Delete Keyword");
   $("a.modify-keyword").on("click", onclick_modify);
   $("a.del-keyword").on("click", onclick_delete);
+
+  $.ajax({
+    method: "GET",
+    url: create_api_url("stories")
+  }).done(function(d) {
+    for (var i in d.data) {
+      let story = d.data[i];
+      $("div.results").append(`<div><a href='${story.link}'>${story.headline}</a>
+      <p>${story.summary}</p></div>`);
+    }
+  });
 });

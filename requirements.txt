@@ -1,6 +1,9 @@
+beautifulsoup4
+certifi>=2019.6.16
 ﻿Flask
 Flask-Bootstrap
 Flask-Login
 Flask-SQLAlchemy
 Flask-WTF
 mysqlclient>=1.4.2
+pycurl==7.43.0.3

@@ -12,6 +12,8 @@
 
 .container {
   position: relative;
+  min-height: 75vh;
+  height: auto;
 }
 
 .keywords {
@@ -29,6 +31,9 @@
 .keywords div > a {
   margin: 3px 2px 0 2px;
   padding-right: 4px;
+}
+.keywords h4 {
+  margin-bottom: 4px;
 }
 
 div#keyword-new {
@@ -51,5 +56,15 @@ a.del-keyword {
 }
 
 .results {
+  margin-top: 20px;
+  min-width: 60vw;
   float: right;
+}
+
+.engine-prefs {
+  position: absolute;
+  bottom: 12%;
+}
+.engine-prefs h4 {
+  margin-bottom: 4px;
 }
