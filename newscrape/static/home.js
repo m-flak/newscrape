@@ -167,6 +167,9 @@ $(function() {
     method: "GET",
     url: create_api_url("stories")
   }).done(function(d) {
+    if (d.status !== "FAIL") {
+      $("div.loading").remove();
+    }
     for (var i in d.data) {
       let story = d.data[i];
       $("div.results").append(`<div><a href='${story.link}'>${story.headline}</a>

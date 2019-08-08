@@ -123,6 +123,49 @@ class GoogleSearch(WebSearch):
                             })
         return results
 
+class BingSearch(WebSearch):
+    base_url = "https://www.bing.com/news/search?q="
+
+    def __init__(self, keywords):
+        full_url = WebSearchQuery(self.base_url)
+        self.full_url = full_url(keywords)
+        self._curl = None
+        self._buffer = None
+
+    def parse_search(self):
+        return Results(self.buffer.getvalue(), self.soup_callback)
+
+    @property
+    def buffer(self):
+        if self._buffer is None:
+            self._buffer = BytesIO()
+        return self._buffer
+    @property
+    def curl(self):
+        if self._curl is None:
+            self._curl = pycurl.Curl()
+            self._curl.setopt(pycurl.URL, self.full_url)
+            # now, bing doesn't have a problem with curl :)
+            self._curl.setopt(pycurl.CAINFO, certifi.where())
+            self._curl.setopt(pycurl.WRITEDATA, self.buffer)
+        return self._curl
+
+    @staticmethod
+    def soup_callback(soup):
+        stories = soup.find_all(class_='news-card')
+        results = []
+        for story in stories:
+            link = story.get('url')
+            headline = story.find('a', class_='title').string
+            story_sum = story.find(class_='snippet')
+            summary = ''.join([sum if not isinstance(sum, Tag) else sum.string for sum in story_sum])
+            results.append({
+                            'headline': headline,
+                            'link': link,
+                            'summary': summary,
+                            })
+        return results
+
 class Results(object):
     def __init__(self, input_data, soup_cb, **kwargs):
         encoding = kwargs.get('encoding', 'utf-8')

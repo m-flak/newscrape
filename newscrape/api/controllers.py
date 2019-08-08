@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, request, g, make_response
 from flask_login import current_user
 from newscrape.api import api_key_required
-from newscrape.api.scraper import Scraper, GoogleSearch
+from newscrape.api.scraper import Scraper, GoogleSearch, BingSearch
 from werkzeug.urls import url_unquote
 import newscrape as ns
 
@@ -75,6 +75,8 @@ def stories():
             for engine in search_prefs:
                 if 'google' in engine:
                     scraper.add_scrapee(GoogleSearch(user.get_keywords()))
+                elif 'bing' in engine:
+                    scraper.add_scrapee(BingSearch(user.get_keywords()))
 
         scraper.scrape()
         stories = scraper.fetch_results()
