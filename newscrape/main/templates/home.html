@@ -2,10 +2,13 @@
 
 {% block head %}
   <meta itemprop="user-api-key" content="{{ apikey }}" />
+  <script src="{{ url_for('static', filename='base64.js') }}"
+    type="text/javascript"></script>
   <script src="{{ url_for('static', filename='js.cookie.js') }}"
     type="text/javascript"></script>
   <script src="{{ url_for('static', filename='home.js') }}"
     type="text/javascript"></script>
+  <style>.content{display: flex;}</style>
 {% endblock %}
 
 {% block header %}
@@ -38,6 +41,8 @@
       <div id="keyword-new"><a class="kw new-keyword" id="modify-keyword-new" href="#" title="Add New Keyword"></a></div>
     {% endif %}
   </div>
+  <br/>
+  <a id="a_wmc" href="#search_engines" target="_self">Want more control?</a>
   <div class="results">
     <!--- 'Fake News' - Donald Trump --->
     <div class="loading">
@@ -48,7 +53,7 @@
 
 {% block endcontainer %}
   <div class="engine-prefs">
-    <h4>Search Engines:</h4>
+    <h4 id="search_engines">Search Engines:</h4>
     <form name="search-engine-prefs">
       <fieldset>
         <legend>Engine Preferences:</legend>

@@ -40,3 +40,11 @@ def url_is_route(for_app, url):
         if url in url_for(k):
             return True
     return False
+
+# FIX B64 STRINGS WITH 'INCORRECT PADDING'
+def fix_bad_b64(b64str):
+    bs   = b64str
+    bsl  = len(bs)
+    if not bs[bsl-2:bsl] == '==':
+        bs += '=='
+    return bs

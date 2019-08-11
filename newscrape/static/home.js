@@ -16,6 +16,48 @@ function get_api_key() {
   return api_tag.content;
 }
 
+/* Create an unique identifier for a given news story search result */
+function make_story_identifier(story) {
+  var lead = new Uint8Array([story.link.length>255?255:story.link.length,
+                            story.headline.length>255?255:story.headline.length,
+                            story.summary.length>255?255:story.summary.length]);
+  let field_id = function mkid(base_str, itr, offset, obj) {
+    if (itr == 4) {
+      return base_str;
+    }
+    var hexxy = obj.charCodeAt(offset+itr)<<8|obj.charCodeAt(offset+itr+1);
+    return mkid(base_str.concat(hexxy.toString(16)), itr+2, offset, obj);
+  };
+  var link_id = field_id('',0,12,story.link);
+  var head_id = field_id('',0,7,story.headline);
+  var sum_id  = field_id('',0,5,story.summary);
+
+  return("ax-by-cz".replace(/[axbycz]/g, function(m) {
+    switch(m) {
+      case 'a':
+        return lead[0].toString(16);
+      break;
+      case 'x':
+        return link_id;
+      break;
+      case 'b':
+        return lead[1].toString(16);
+      break;
+      case 'y':
+        return head_id;
+      break;
+      case 'c':
+        return lead[2].toString(16);
+      break;
+      case 'z':
+        return sum_id;
+      default:
+        return '';
+      break;
+    }
+  }));
+}
+
 function create_api_url(what_api) {
   var base_url = window.frames.location.href.match(/^.+\//).toString();
   var api_key  = get_api_key();
@@ -110,6 +152,22 @@ function onclick_delete(e) {
   });
 }
 
+const saved_story_ids = function() {
+  var ssids = new Array();
+  $.ajax({
+    method: "GET",
+    url: create_api_url("saved_stories").concat("&what=id"),
+    async: false
+  }).done(function(d) {
+    if (d.status !== "FAIL") {
+      for (var i in d.data) {
+        ssids.push(d.data[i]);
+      }
+    }
+  });
+  return ssids;
+}();
+
 $(function() {
   let engine_prefs = $("form[name='search-engine-prefs']").children().children("input:checkbox");
 
@@ -163,17 +221,50 @@ $(function() {
   $("a.modify-keyword").on("click", onclick_modify);
   $("a.del-keyword").on("click", onclick_delete);
 
+  /* Fetch our news stories */
   $.ajax({
     method: "GET",
     url: create_api_url("stories")
   }).done(function(d) {
     if (d.status !== "FAIL") {
       $("div.loading").remove();
+    } else {
+      return;
     }
     for (var i in d.data) {
       let story = d.data[i];
-      $("div.results").append(`<div><a href='${story.link}'>${story.headline}</a>
-      <p>${story.summary}</p></div>`);
+      var ident = make_story_identifier(story);
+
+      /* only display the save icon if the user hasn't saved the story */
+      if (!saved_story_ids.includes(ident)) {
+        $("div.results").append(`<div class='news-story' data-storyid='${ident}'>
+        <a class='save-story' href='#' title='Save Story'></a>
+        <a href='${story.link}'>${story.headline}</a>
+        <p>${story.summary}</p></div>`);
+      } else {
+        $("div.results").append(`<div class='news-story' data-storyid='${ident}'>
+        <a href='${story.link}'>${story.headline}</a>
+        <p>${story.summary}</p></div>`);
+      }
     }
+
+    $("a.save-story").on("click", function(e) {
+      let parent = $(e.currentTarget.parentElement);
+      var story_id = e.currentTarget.parentElement.dataset.storyid;
+      var story_lnk = parent.children("a:not(.save-story)").attr('href');
+      var story_hdl = parent.children("a:not(.save-story)").text();
+      var story_sum = parent.children("p").text();
+
+      $.ajax({
+        method: "POST",
+        url: create_api_url("saved_stories"),
+        data: { action: 'save', id: story_id, link: Base64.encodeURI(story_lnk),
+                headline: Base64.encodeURI(story_hdl),
+                summary: Base64.encodeURI(story_sum)
+              }
+      });
+      $(this).remove();
+    });
   });
+
 });

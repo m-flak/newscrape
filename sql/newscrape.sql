@@ -27,6 +27,22 @@ CREATE TABLE keywords (
   ON UPDATE CASCADE
 );
 
+/* SAVED STORIES TABLES */
+CREATE TABLE saved_stories (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user INT UNSIGNED NOT NULL,
+  storyid VARCHAR(64) DEFAULT NULL,
+  link TEXT,
+  headline TEXT,
+  summary TEXT,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user)
+  REFERENCES users (id)
+  ON DELETE RESTRICT
+  ON UPDATE CASCADE,
+  UNIQUE KEY (storyid(32))
+);
+
 /* CREATE PROCEDURES FOR USER TABLES */
 DELIMITER //
 /* Add a new user */

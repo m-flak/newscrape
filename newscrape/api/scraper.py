@@ -169,7 +169,11 @@ class BingSearch(WebSearch):
 class Results(object):
     def __init__(self, input_data, soup_cb, **kwargs):
         encoding = kwargs.get('encoding', 'utf-8')
-        self.html = input_data.decode(encoding)
+        alt_encoding = kwargs.get('alt_encoding', 'latin-1')
+        try:
+            self.html = input_data.decode(encoding)
+        except UnicodeDecodeError:
+            self.html = input_data.decode(alt_encoding)
         self.soup = BeautifulSoup(self.html, features="html.parser")
         self.results = None
 

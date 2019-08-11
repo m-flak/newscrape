@@ -17,6 +17,7 @@ class User(UserMixin, ns.db.Model):
     keywords   = ns.db.relationship('Keyword', backref='user', lazy='dynamic')
     api_key    = ns.db.Column(ns.db.Text)
     key_expire = ns.db.Column(ns.db.DateTime)
+    stories    = ns.db.relationship('SavedStory', backref='user', lazy='dynamic')
 
     def __repr__(self):
         return '<User {} via {}>'.format(self.name,self.email)
@@ -77,3 +78,23 @@ class Keyword(ns.db.Model):
 
     def __repr__(self):
         return "<Keyword '{}'>".format(self.keyword)
+
+class SavedStory(ns.db.Model):
+    __tablename__ = 'saved_stories'
+    id       = ns.db.Column(ns.db.Integer, primary_key=True)
+    uid      = ns.db.Column('user', ns.db.Integer, ForeignKey('users.id'))
+    storyid  = ns.db.Column(ns.db.String(64), index=True, unique=True)
+    link     = ns.db.Column(ns.db.Text)
+    headline = ns.db.Column(ns.db.Text)
+    summary  = ns.db.Column(ns.db.Text)
+
+    def __repr__(self):
+        return "<SavedStory '{}'>".format(self.storyid)
+
+    def make_dict(self):
+        return dict({
+                    'id': self.storyid,
+                    'link': self.link,
+                    'headline': self.headline,
+                    'summary': self.summary,
+        })

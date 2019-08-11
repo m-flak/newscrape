@@ -52,19 +52,27 @@ a.new-keyword {
   background: no-repeat url("/static/new-keyword.gif");
 }
 a.del-keyword {
-  background: no-repeat url("/static/del-keyword.gif")
+  background: no-repeat url("/static/del-keyword.gif");
 }
 
 .results {
+  margin-left: 8px;
   margin-top: 20px;
   min-width: 60vw;
   float: right;
 }
-
-.engine-prefs {
-  position: absolute;
-  bottom: 12%;
+a.save-story {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: no-repeat url("/static/save.gif");
 }
+
+#a_wmc {
+  margin-right: 16px;
+  margin-top: 32px;
+}
+
 .engine-prefs h4 {
   margin-bottom: 4px;
 }
