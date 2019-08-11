@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <meta itemprop="user-api-key" content="{{ apikey }}" />
+  <script src="{{ url_for('static', filename='api.js') }}"
+    type="text/javascript"></script>
+  <script src="{{ url_for('static', filename='saved.js') }}"
+    type="text/javascript"></script>
+{% endblock %}
+
+{% block header %}
+  <h2>{% block title %}Saved Stories{% endblock %}</h2>
+  <div id="navbar">
+    <a href="{{ url_for('main.index') }}">Home</a>
+    &nbsp;&#x25CF;&nbsp;
+    {% if current_user.admin == true %}
+      <a href="{{ url_for('main.admin') }}">Admin</a>
+    {% else %}
+      <a href="{{ url_for('main.user') }}">User</a>
+    {% endif %}
+    &nbsp;&#x25CF;&nbsp;
+    <a href="#">Saved Stories</a>
+    &nbsp;&#x25CF;&nbsp;
+    <a href="{{ url_for('main.logout') }}">Logout</a>
+  </div>
+  <br/>
+{% endblock %}
+
+{% block content %}
+  <div class="saved-stories">
+  {% for story in saved_stories %}
+    <div class="news-story" data-storyid="{{ story.id }}">
+      <a class="delete-story" href="#" title="Delete Saved Story"></a>
+      <a href="{{ story.link }}">{{ story.headline }}</a>
+      <p>{{ story.summary }}</p>
+    </div>
+  {% endfor %}
+  {% if saved_stories|length() == 0 %}
+    <p> You have no saved stories. You can save stories that you find interesting
+      via the <span style="font-style: italic;">Home</span> page.
+    </p>
+  {% endif %}
+  </div>
+{% endblock %}

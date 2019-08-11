@@ -140,3 +140,12 @@ def user():
         return redirect(url_for('main.user'))
 
     return render_template('user.html', form=form)
+
+@main.route('/saved')
+@login_required
+def saved():
+    apikey = current_user.get_api_key()
+    saved_stories = [ss.make_dict() for ss in current_user.get_saved_stories()]
+
+    return render_template('saved.html', apikey=werkzeug.urls.url_fix(apikey),
+                            saved_stories=saved_stories)

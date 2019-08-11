@@ -66,6 +66,9 @@ class User(UserMixin, ns.db.Model):
     def get_keywords(self):
         return [kw.keyword for kw in Keyword.query.filter_by(user=self).all()]
 
+    def get_saved_stories(self):
+        return SavedStory.query.filter_by(user=self).all()
+
 @ns.login.user_loader
 def load_user(id):
     return User.query.get(int(id))

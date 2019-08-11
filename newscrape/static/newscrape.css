@@ -76,3 +76,13 @@ a.save-story {
 .engine-prefs h4 {
   margin-bottom: 4px;
 }
+
+.saved-stories {
+  margin: 4% 0 0 2%;
+}
+a.delete-story {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: no-repeat url("/static/trash.gif");
+}

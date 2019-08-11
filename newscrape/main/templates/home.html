@@ -6,6 +6,8 @@
     type="text/javascript"></script>
   <script src="{{ url_for('static', filename='js.cookie.js') }}"
     type="text/javascript"></script>
+  <script src="{{ url_for('static', filename='api.js') }}"
+    type="text/javascript"></script>
   <script src="{{ url_for('static', filename='home.js') }}"
     type="text/javascript"></script>
   <style>.content{display: flex;}</style>
@@ -21,6 +23,8 @@
     {% else %}
       <a href="{{ url_for('main.user') }}">User</a>
     {% endif %}
+    &nbsp;&#x25CF;&nbsp;
+    <a href="{{ url_for('main.saved') }}">Saved Stories</a>
     &nbsp;&#x25CF;&nbsp;
     <a href="{{ url_for('main.logout') }}">Logout</a>
   </div>

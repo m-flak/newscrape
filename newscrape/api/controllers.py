@@ -109,6 +109,17 @@ def saved_stories():
             ns.db.session.commit()
             r = make_response({'status': 'OK', 'data': [],})
             r.mimetype = 'application/json'
+        elif request.form['action'] == 'delete':
+            savstory = ns.models.SavedStory.query.filter_by(uid=g.uid,
+                                                    storyid=request.form['id'])
+            if not savstory.count() >= 1:
+                r = make_response({'status': 'FAIL', 'data': [],})
+                r.mimetype = 'application/json'
+            else:
+                savstory.delete()
+                ns.db.session.commit()
+                r = make_response({'status': 'OK', 'data': [],})
+                r.mimetype = 'application/json'
     elif request.method == 'GET':
         # only one or the other can be in arguments
         if 'what' in request.args and 'id' in request.args:
