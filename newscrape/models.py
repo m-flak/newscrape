@@ -2,6 +2,7 @@ import base64
 from datetime import datetime, timedelta
 from itsdangerous.signer import Signer
 from flask_login import UserMixin
+from flask import current_app
 from sqlalchemy import text
 from sqlalchemy.schema import ForeignKey
 from newscrape.utils import validate_inputs
@@ -50,7 +51,7 @@ class User(UserMixin, ns.db.Model):
             conn.close()
 
     def gen_api_key(self):
-        signer = Signer(base64.b64decode(ns.app.secret_key),self.name)
+        signer = Signer(base64.b64decode(current_app.secret_key),self.name)
         self.api_key = base64.b64encode(signer.sign('API_KEY'))
         ns.db.session.commit()
 

@@ -1,7 +1,8 @@
 import base64
 import werkzeug.urls
 from flask import (
-Blueprint, render_template, request, abort, flash, redirect, url_for
+Blueprint, render_template, request, abort, flash, redirect, url_for,
+current_app
 )
 from flask_login import login_required, login_user, logout_user, current_user
 from sqlalchemy import text
@@ -52,7 +53,7 @@ def login():
             return redirect(url_for('main.login', next=request.form['next']))
         login_user(user)
         next_page = request.form['next']
-        if not next_page or not url_is_route(ns.app, next_page):
+        if not next_page or not url_is_route(current_app, next_page):
             next_page = url_for('main.index')
         flash("Login was successful!")
         return redirect(next_page)
