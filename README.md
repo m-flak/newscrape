@@ -1,6 +1,8 @@
 # newscrape
 Fetch and save news articles with multi-user support. A Flask web app.
 
+[Click here to see NewScrape in action](https://newscrape.net/)
+
 __Features:__
 * Multi-User Login
 * Administration for managing registered users
