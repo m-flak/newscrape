@@ -108,7 +108,7 @@ $(function() {
 
   /* Create default user choices cookie; Otherwise, load them */
   if (Cookies.get('newscrape_sprefs') == null) {
-    Cookies.set('newscrape_sprefs', 'google,bing');
+    Cookies.set('newscrape_sprefs', 'google,bing,yahoo');
   } else {
     var engines = Cookies.get('newscrape_sprefs').split(',');
     for (var i in engines) {

@@ -45,12 +45,13 @@ class WebSearchQuery(SearchQuery):
     def __init__(self, search_addr, *args, **kwargs):
         super(WebSearchQuery, self).__init__(*args, **kwargs)
         self.url = werkzeug.urls.url_parse(search_addr)
+        self.query_param_name = kwargs.get('query_param_name', "q")
 
     # Refer to SearchQuery.__call__
     def __call__(self, *args):
         searchstr = super(WebSearchQuery, self).__call__(*args)
         query = werkzeug.urls.url_decode(self.url.query)
-        query['q'] = searchstr
+        query[self.query_param_name] = searchstr
         new_url = werkzeug.urls.URL(self.url.scheme, self.url.netloc,
                     self.url.path, werkzeug.urls.url_encode(query),
                     self.url.fragment)
@@ -80,7 +81,7 @@ class GoogleSearch(WebSearch):
         self._buffer = None
 
     def parse_search(self):
-        return Results(self.buffer.getvalue(), self.soup_callback)
+        return Results(self.buffer.getvalue(), self)
 
     @property
     def buffer(self):
@@ -133,7 +134,7 @@ class BingSearch(WebSearch):
         self._buffer = None
 
     def parse_search(self):
-        return Results(self.buffer.getvalue(), self.soup_callback)
+        return Results(self.buffer.getvalue(), self)
 
     @property
     def buffer(self):
@@ -166,8 +167,54 @@ class BingSearch(WebSearch):
                             })
         return results
 
+class YahooSearch(WebSearch):
+    base_url = "https://news.search.yahoo.com/search?p="
+
+    def __init__(self, keywords):
+        full_url = WebSearchQuery(self.base_url, query_param_name='p')
+        self.full_url = full_url(keywords)
+        self._curl = None
+        self._buffer = None
+
+    def parse_search(self):
+        return Results(self.buffer.getvalue(), self)
+
+    @property
+    def buffer(self):
+        if self._buffer is None:
+            self._buffer = BytesIO()
+        return self._buffer
+    @property
+    def curl(self):
+        if self._curl is None:
+            self._curl = pycurl.Curl()
+            self._curl.setopt(pycurl.URL, self.full_url)
+            self._curl.setopt(pycurl.CAINFO, certifi.where())
+            self._curl.setopt(pycurl.WRITEDATA, self.buffer)
+        return self._curl
+
+    @staticmethod
+    def soup_callback(soup):
+        stories = soup.find_all(class_='dd NewsArticle')
+        results = []
+        for story in stories:
+            a_hla = story.find('a')
+            link = a_hla.get('href')
+            if a_hla.get('title') is not None:
+                headline = a_hla.get('title')
+            else:
+                headline = ''.join([hdl if not isinstance(hdl, Tag) else hdl.string for hdl in a_hla])
+            p_sum = story.find('p')
+            summary = ''.join([sum if not isinstance(sum, Tag) else sum.string for sum in p_sum])
+            results.append({
+                            'headline': headline,
+                            'link': link,
+                            'summary': summary,
+                            })
+        return results
+
 class Results(object):
-    def __init__(self, input_data, soup_cb, **kwargs):
+    def __init__(self, input_data, parent_search, **kwargs):
         encoding = kwargs.get('encoding', 'utf-8')
         alt_encoding = kwargs.get('alt_encoding', 'latin-1')
         try:
@@ -177,6 +224,7 @@ class Results(object):
         self.soup = BeautifulSoup(self.html, features="html.parser")
         self.results = None
 
+        soup_cb = getattr(parent_search, 'soup_callback')
         self.eat_soup(soup_cb)
 
     def eat_soup(self, cb):

@@ -2,7 +2,7 @@ import base64 as b64
 from flask import Blueprint, abort, request, g, make_response
 from flask_login import current_user
 from newscrape.api import api_key_required
-from newscrape.api.scraper import Scraper, GoogleSearch, BingSearch
+from newscrape.api.scraper import Scraper, GoogleSearch, BingSearch, YahooSearch
 from werkzeug.urls import url_unquote
 import newscrape as ns
 from newscrape.utils import fix_bad_b64
@@ -79,6 +79,8 @@ def stories():
                     scraper.add_scrapee(GoogleSearch(user.get_keywords()))
                 elif 'bing' in engine:
                     scraper.add_scrapee(BingSearch(user.get_keywords()))
+                elif 'yahoo' in engine:
+                    scraper.add_scrapee(YahooSearch(user.get_keywords()))
 
         scraper.scrape()
         stories = scraper.fetch_results()
